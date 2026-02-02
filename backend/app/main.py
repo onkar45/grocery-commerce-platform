@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import auth, users,admins,categories,products
+from app.api import auth, users,admins,categories,products, public
 from app.db.session import engine
 from app.db.base import Base
 
@@ -10,6 +10,7 @@ app.include_router(users.router)
 app.include_router(admins.router)
 app.include_router(categories.router)
 app.include_router(products.router)
+app.include_router(public.router)
 
 @app.on_event("startup")
 def create_tables():
