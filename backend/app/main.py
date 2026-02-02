@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import auth, users,admins,categories,products, public
+from app.api import auth, users,admins,categories,products, public, inventory, orders
 from app.db.session import engine
 from app.db.base import Base
 
@@ -11,11 +11,14 @@ app.include_router(admins.router)
 app.include_router(categories.router)
 app.include_router(products.router)
 app.include_router(public.router)
+app.include_router(inventory.router)
+app.include_router(orders.router)
+
 
 @app.on_event("startup")
 def create_tables():
     # Import models here to ensure they're registered with Base
-    from app.models import user, role, permission, user_role, role_permission, category, product
+    from app.models import user, role, permission, user_role, role_permission, category, product, inventory, order, order_item
     Base.metadata.create_all(bind=engine)
 
 @app.get("/")
