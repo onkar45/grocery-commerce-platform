@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import auth, users,admins,categories,products, public, inventory, orders, payments, refunds, order_status, admin_orders
+from app.api import auth, users,admins,categories,products, public, inventory, orders, payments, refunds, order_status, admin_orders, admin_order_detail
 from app.db.session import engine
 from app.db.base import Base
 
@@ -17,6 +17,7 @@ app.include_router(payments.router)
 app.include_router(refunds.router)
 app.include_router(order_status.router)
 app.include_router(admin_orders.router)
+app.include_router(admin_order_detail.router)
 
 
 @app.on_event("startup")
