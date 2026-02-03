@@ -29,12 +29,20 @@ def initiate(
 
 
 @router.post("/success/{payment_id}")
-def payment_success(payment_id: int, db: Session = Depends(get_db)):
-    mark_payment_success(db, payment_id)
+def payment_success(payment_id: int, db: Session = Depends(get_db), user = Depends(get_current_user)):
+    mark_payment_success(db, payment_id, actor_id=user["user_id"])
     return {"message": "Payment successful"}
 
 
 @router.post("/failed/{payment_id}")
-def payment_failed(payment_id: int, db: Session = Depends(get_db)):
-    mark_payment_failed(db, payment_id)
+def payment_failed(
+    payment_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    mark_payment_failed(
+        db=db,
+        payment_id=payment_id,
+        actor_id=user["user_id"]
+    )
     return {"message": "Payment failed"}

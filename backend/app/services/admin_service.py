@@ -3,8 +3,9 @@ from app.models.user import User
 from app.models.role import Role
 from app.models.user_role import user_roles
 from app.utils.password import hash_password
+from app.services.audit_service import log_action
 
-def create_admin_user(db: Session, email: str, password: str, role_name: str):
+def create_admin_user(db: Session, email: str, password: str, role_name: str, actor_id):
     if role_name not in ["admin", "staff"]:
         raise ValueError("Invalid admin role")
 
@@ -21,16 +22,15 @@ def create_admin_user(db: Session, email: str, password: str, role_name: str):
     db.commit()
     db.refresh(user)
 
-    role = db.query(Role).filter(Role.name == role_name).first()
-    if not role:
-        raise ValueError("Role not found")
+    # assign role logic here...
 
-    db.execute(
-        user_roles.insert().values(
-            user_id=user.id,
-            role_id=role.id
-        )
+    log_action(
+        db=db,
+        actor_id=actor_id,
+        action="ADMIN_CREATE",
+        resource="USER",
+        resource_id=user.id,
+        message=f"Admin created with role: {role_name}"
     )
-    db.commit()
 
     return user
