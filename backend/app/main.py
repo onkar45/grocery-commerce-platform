@@ -1,9 +1,18 @@
 from fastapi import FastAPI
-from app.api import auth, users,admins,categories,products, public, inventory, orders, payments, refunds, order_status, admin_orders, admin_order_detail, audit_logs
+from app.api import auth, users,admins,categories,products, public, inventory, orders, payments, refunds, order_status, admin_orders, admin_order_detail, audit_logs, admin_dashboard
 from app.db.session import engine
 from app.db.base import Base
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Enterprise Grocery Platform API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth.router)
 app.include_router(users.router)
@@ -19,6 +28,7 @@ app.include_router(order_status.router)
 app.include_router(admin_orders.router)
 app.include_router(admin_order_detail.router)
 app.include_router(audit_logs.router)
+app.include_router(admin_dashboard.router)
 
 
 @app.on_event("startup")

@@ -12,4 +12,6 @@ class Product(Base):
     is_active = Column(Boolean, default=True)
 
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
-    category = relationship("Category")
+    
+    # Relationship with category
+    category = relationship("Category", back_populates="products")

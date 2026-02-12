@@ -9,6 +9,10 @@ class OrderCreateRequest(BaseModel):
     items: List[OrderItemRequest]
 
 class OrderResponse(BaseModel):
-    order_id: int
-    status: str
+    id: int
+    user_email: str
     total_amount: float
+    status: str
+
+    class Config:
+        from_attributes = True

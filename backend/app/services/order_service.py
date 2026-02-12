@@ -5,6 +5,7 @@ from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.inventory import Inventory
 from app.models.product import Product
+from app.models.user import User
 
 def create_order(db: Session, user_id: int, items):
     total_amount = 0
@@ -60,3 +61,39 @@ def create_order(db: Session, user_id: int, items):
     db.refresh(order)
 
     return order
+
+
+def get_all_orders(db):
+    return (
+        db.query(
+            Order.id,
+            Order.total_amount,
+            Order.status,
+            User.email.label("user_email")
+        )
+        .join(User, User.id == Order.user_id)
+        .all()
+    )
+
+def update_status_and_inventory(db: Session, order_id: int, status: str):
+    print("🔥 FORCED INVENTORY UPDATE START 🔥")
+
+    items = db.query(OrderItem).filter(
+        OrderItem.order_id == order_id
+    ).all()
+
+    print("ITEM COUNT:", len(items))
+
+    for item in items:
+        inventory = db.query(Inventory).filter(
+            Inventory.product_id == item.product_id
+        ).first()
+
+        print("FOUND INVENTORY:", inventory.product_id)
+
+        inventory.stock_qty = inventory.stock_qty - 1
+        inventory.reserved_qty = 0
+
+    db.commit()
+    return {"message": "FORCED UPDATE"}
+
